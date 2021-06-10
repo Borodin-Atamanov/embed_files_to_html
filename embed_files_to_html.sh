@@ -115,7 +115,7 @@ if [[ $mime_type == *"image/"* ]]; then
     str_file_data=$( echo -n "<img class=\"secret\" src=\"data:${mime_type};base64,${b64_file_data}\" class=\"secret\" title=\"${f}\" alt=\"${f}\">"; );
 fi
 if [[ $mime_type == *"video/"* ]]; then
-    str_file_data=$( echo -n "<video autoplay loop><source src=\"data:${mime_type};base64,${b64_file_data}\" class=\"secret\" title=\"${f}\" alt=\"${f}\" type=\"${mime_type}\">Your browser does not support mp4 documents</video>"; );
+    str_file_data=$( echo -n "<video autoplay loop muted preload=auto><source src=\"data:${mime_type};base64,${b64_file_data}\" class=\"secret\" title=\"${f}\" alt=\"${f}\" type=\"${mime_type}\">Your browser does not support mp4 documents</video>"; );
 fi
 echo -n "${str_file_data}" >> "${output}";
 str_file_data="";
