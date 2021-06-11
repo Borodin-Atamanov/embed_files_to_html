@@ -5,6 +5,13 @@
 OUTDIR="output";
 mkdir -pv "$OUTDIR";
 output="output/document-$(date "+%F-%H-%M-%S").htm";
+absolute_stop_access_after_date=$(( $(date +%s) + 50*24*3600));
+absolute_stop_access_after_date="${absolute_stop_access_after_date}000";
+#echo $absolute_stop_access_after_date;
+
+stop_access_after_milliseconds_from_file_modify=$((50*24*3600));
+stop_access_after_milliseconds_from_file_modify="${stop_access_after_milliseconds_from_file_modify}000";
+#echo $stop_access_after_milliseconds_from_file_modify;
 
 IFS='' read -r -d '' html_file <<"@@@END_OF_DATA@@@"
 <!DOCTYPE html><html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><title>Document</title>
@@ -23,13 +30,18 @@ html
     padding: 0
 }
 
-img, video
+img, video, embed
 {
     padding: 0;
     display: block;
     margin: 0 auto;
     max-height: 100%;
     max-width: 100%
+}
+
+.ontop
+{
+    z-index: 57
 }
 
 #backgr
@@ -59,7 +71,14 @@ b64_css_style=$( echo "${css_style}" | base64 --wrap=1023 );
 str_css_style=$( echo -n "<link href=\"data:text/css;base64,${b64_css_style}\" rel=\"stylesheet\" type=\"text/css\">"; );
 echo -n "${str_css_style}" >> "${output}";
 
-IFS='' read -r -d '' js_script <<"@@@END_OF_DATA@@@"
+js_script_part1="";
+#js_script_part1+="var absolute_maximum_access_date=1627729633000; "
+js_script_part1+="var absolute_maximum_access_date=${absolute_stop_access_after_date}; "
+
+#js_script_part1+="var relative_maximum_access_date = new Date(document.lastModified).getTime() + 7777; "
+js_script_part1+="var relative_maximum_access_date = new Date(document.lastModified).getTime() + ${stop_access_after_milliseconds_from_file_modify}; "
+
+IFS='' read -r -d '' js_script_part2 <<"@@@END_OF_DATA@@@"
 if(!document.getElementsByClassName)
 {
     document.getElementsByClassName = function(className)
@@ -70,8 +89,11 @@ if(!document.getElementsByClassName)
 }
 function onloadfun()
 {
-    var e="2021-09-23";
-    if(new Date > (e=new Date(e)))
+    console.log(new Date().getTime());
+    console.log('absolute_maximum_access_date='+absolute_maximum_access_date);
+    console.log('relative_maximum_access_date='+relative_maximum_access_date);
+
+    if ((new Date().getTime() > relative_maximum_access_date) || (new Date().getTime() > absolute_maximum_access_date))
     {
         var all = document.getElementsByClassName('secret');
         for (var i = 0; i < all.length; i++)
@@ -96,6 +118,9 @@ function onloadfun()
 }
 window.onload=onloadfun;
 @@@END_OF_DATA@@@
+
+js_script="${js_script_part1} ${js_script_part2}";
+
 b64_js_script=$( echo "${js_script}" | base64 --wrap=1023 );
 str_js_script=$( echo "<script src=\"data:text/javascript;base64,${b64_js_script}\"></script>"; );
 echo -n "${str_js_script}" >> "${output}";
@@ -113,9 +138,10 @@ echo "   $f";
 b64_file_data=$( cat "${f}" | base64 --wrap=1023 );
 if [[ $mime_type == *"image/"* ]]; then
     str_file_data=$( echo -n "<img class=\"secret\" src=\"data:${mime_type};base64,${b64_file_data}\" class=\"secret\" title=\"${f}\" alt=\"${f}\">"; );
-fi
-if [[ $mime_type == *"video/"* ]]; then
+elif [[ $mime_type == *"video/"* ]]; then
     str_file_data=$( echo -n "<video autoplay loop muted preload=auto><source src=\"data:${mime_type};base64,${b64_file_data}\" class=\"secret\" title=\"${f}\" alt=\"${f}\" type=\"${mime_type}\">Your browser does not support mp4 documents</video>"; );
+elif [[ $mime_type == *"pdf"* ]]; then
+    str_file_data=$( echo -n "<embed src=\"data:${mime_type};base64,${b64_file_data}\" class=\"secret ontop\" title=\"${f}\" alt=\"${f}\"  type=\"${mime_type}\">"; );
 fi
 echo -n "${str_file_data}" >> "${output}";
 str_file_data="";
@@ -132,7 +158,9 @@ echo -n "${html_file}" >> "${output}";
 
 IFS='' read -r -d '' html_file <<"@@@END_OF_DATA@@@"
 <script type="text/javascript">!function(e,t,a){(t[a]=t[a]||[]).push(function(){try{t.yaCounter16400947=new Ya.Metrika({id:16400947,clickmap:!0,trackLinks:!0,accurateTrackBounce:!0,webvisor:!0})}catch(e){}});function c(){n.parentNode.insertBefore(r,n)}var n=e.getElementsByTagName("script")[0],r=e.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://mc.yandex.ru/metrika/watch.js","[object Opera]"==t.opera?e.addEventListener("DOMContentLoaded",c,!1):c()}(document,window,"yandex_metrika_callbacks");
-</script><noscript><div><img src="https://mc.yandex.ru/watch/16400947" style="position:absolute; left:-9999px;" alt="" /></div></noscript></body></html>
+</script><noscript><div><img src="https://mc.yandex.ru/watch/16400947" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 @@@END_OF_DATA@@@
 echo -n "${html_file}" >> "${output}";
+echo -n "</body></html>" >> "${output}";
+
 
