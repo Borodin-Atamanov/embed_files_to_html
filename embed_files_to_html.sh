@@ -36,45 +36,45 @@ IFS='' read -r -d '' css_style <<"@@@END_OF_DATA@@@"
 body,
 html
 {
-    height: 100%;
-    margin: 0;
-    padding: 0
+	height: 100%;
+	margin: 0;
+	padding: 0;
 }
 
 img, video, embed
 {
-    padding: 0;
-    display: block;
-    margin: 0 auto;
-    max-height: 100%;
-    max-width: 100%
+	padding: 0;
+	display: block;
+	margin: 0 auto;
+	max-height: 100%;
+	max-width: 100%
 }
 
 .ontop
 {
-    z-index: 57
+	z-index: 57;
 }
 
 #backgr
 {
-    width: 100%;
-    height: 100%;
-    position: fixed;
-    left: 0;
-    top: 0;
-    z-index: 42
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	left: 0;
+	top: 0;
+	z-index: 42;
 }
 
 .secret
 {
-    display: none;
-    visibility: hidden;
+	display: none;
+	visibility: hidden;
 }
 
 .stretch100
 {
-    width: 100%;
-    height: 100%
+	width: 100%;
+	height: 100%
 }
 @@@END_OF_DATA@@@
 
@@ -89,45 +89,45 @@ js_script_part1+="var relative_maximum_access_date = new Date(document.lastModif
 IFS='' read -r -d '' js_script_part2 <<"@@@END_OF_DATA@@@"
 if(!document.getElementsByClassName)
 {
-    document.getElementsByClassName = function(className)
-    {
-        return this.querySelectorAll("." + className);
-    };
-    Element.prototype.getElementsByClassName = document.getElementsByClassName;
+	document.getElementsByClassName = function(className)
+	{
+		return this.querySelectorAll("." + className);
+	};
+	Element.prototype.getElementsByClassName = document.getElementsByClassName;
 }
 function jekyll_or_hyde()
 {
-    console.log(new Date().getTime());
-    console.log('absolute_maximum_access_date='+absolute_maximum_access_date+' ETA:'+((absolute_maximum_access_date - new Date().getTime())/1000));
-    console.log('relative_maximum_access_date='+relative_maximum_access_date+' ETA:'+((relative_maximum_access_date - new Date().getTime())/1000));
+	console.log(new Date().getTime());
+	console.log('absolute_maximum_access_date='+absolute_maximum_access_date+' ETA:'+((absolute_maximum_access_date - new Date().getTime())/1000));
+	console.log('relative_maximum_access_date='+relative_maximum_access_date+' ETA:'+((relative_maximum_access_date - new Date().getTime())/1000));
 
-    if ((new Date().getTime() > relative_maximum_access_date) || (new Date().getTime() > absolute_maximum_access_date))
-    {
-        var all = document.getElementsByClassName('secret');
-        for (var i = 0; i < all.length; i++)
-        {
-            all[i].style.visibility="hidden";
-            all[i].style.display="none";
-        }
-        for(var n=document.getElementsByTagName("img"), a=0; a<n.length; a++)n[a].style.display="none",
-        n[a].style.visibility="hidden";
-        document.write("Access denied");
-    }
-    else
-    {
-        //show must go on!
-        var all = document.getElementsByClassName('secret');
-        for (var i = 0; i < all.length; i++)
-        {
-            all[i].style.visibility="visible";
-            all[i].style.display="block";
-        }
-    }
-    timerId = setTimeout(jekyll_or_hyde, 17777);
+	if ((new Date().getTime() > relative_maximum_access_date) || (new Date().getTime() > absolute_maximum_access_date))
+	{
+		var all = document.getElementsByClassName('secret');
+		for (var i = 0; i < all.length; i++)
+		{
+			all[i].style.visibility="hidden";
+			all[i].style.display="none";
+		}
+		for(var n=document.getElementsByTagName("img"), a=0; a<n.length; a++)n[a].style.display="none",
+		n[a].style.visibility="hidden";
+		document.write("Access denied");
+	}
+	else
+	{
+		//show must go on!
+		var all = document.getElementsByClassName('secret');
+		for (var i = 0; i < all.length; i++)
+		{
+			all[i].style.visibility="visible";
+			all[i].style.display="block";
+		}
+	}
+	timerId = setTimeout(jekyll_or_hyde, 17777);
 }
 function onloadfun()
 {
-    jekyll_or_hyde()
+	jekyll_or_hyde()
 }
 window.onload=onloadfun;
 @@@END_OF_DATA@@@
@@ -149,11 +149,11 @@ echo -n $mime_type;
 echo "   $f";
 b64_file_data=$( cat "${f}" | base64 --wrap=1023 );
 if [[ $mime_type == *"image/"* ]]; then
-    str_file_data=$( echo -n "<img class=\"secret\" src=\"data:${mime_type};base64,${b64_file_data}\" class=\"secret\" title=\"${f}\" alt=\"${f}\">"; );
+	str_file_data=$( echo -n "<img class=\"secret\" src=\"data:${mime_type};base64,${b64_file_data}\" class=\"secret\" title=\"${f}\" alt=\"${f}\">"; );
 elif [[ $mime_type == *"video/"* ]]; then
-    str_file_data=$( echo -n "<video autoplay loop muted preload=auto controls=false><source src=\"data:${mime_type};base64,${b64_file_data}\" class=\"secret\" title=\"${f}\" alt=\"${f}\" type=\"${mime_type}\">Your browser does not support mp4 documents</video>"; );
+	str_file_data=$( echo -n "<video autoplay loop muted preload=auto><source src=\"data:${mime_type};base64,${b64_file_data}\" class=\"secret\" title=\"${f}\" alt=\"${f}\" type=\"${mime_type}\">Your browser does not support mp4 documents</video>"; );
 elif [[ $mime_type == *"pdf"* ]]; then
-    str_file_data=$( echo -n "<embed src=\"data:${mime_type};base64,${b64_file_data}\" class=\"secret ontop\" title=\"${f}\" alt=\"${f}\"  type=\"${mime_type}\">"; );
+	str_file_data=$( echo -n "<embed src=\"data:${mime_type};base64,${b64_file_data}\" class=\"secret ontop\" title=\"${f}\" alt=\"${f}\"  type=\"${mime_type}\">"; );
 fi
 echo -n "${str_file_data}" >> "${output}";
 str_file_data="";
@@ -186,9 +186,9 @@ b64_js_script=$( echo "${js_script_part3}" | base64 --wrap=1023 );
 str_js_script=$( echo "<script src=\"data:text/javascript;base64,${b64_js_script}\"></script>"; );
 echo -n "${str_js_script}" >> "${output}";
 
-echo -n '<noscript><div><img src="https://mc.yandex.ru/watch/' >> "${output}";
+echo -n '<noscript><div><img style="position:absolute; left:-9999px;" alt="" src="https://mc.yandex.ru/watch/' >> "${output}";
 echo -n "${yandex_metrika_id}" >> "${output}";
-echo -n '" style="position:absolute; left:-9999px;" alt="" /></div></noscript>' >> "${output}";
+echo -n '"/></div></noscript>' >> "${output}";
 echo -n "</body></html>" >> "${output}";
 
 
