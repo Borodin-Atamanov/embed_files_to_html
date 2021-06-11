@@ -5,10 +5,12 @@
 OUTDIR="output";
 mkdir -pv "$OUTDIR";
 output="output/document-$(date "+%F-%H-%M-%S").htm";
-absolute_stop_access_after_date=$(( $(date +%s) + 50*24*3600));
+#After this count of days*hours*seconds from today file will block from view
+absolute_stop_access_after_date=$(( $(date +%s) + 177*24*3600));
 absolute_stop_access_after_date="${absolute_stop_access_after_date}000";
 #echo $absolute_stop_access_after_date;
 
+#After this count of days*hours*seconds from file modify date file will block from view
 stop_access_after_milliseconds_from_file_modify=$((50*24*3600));
 stop_access_after_milliseconds_from_file_modify="${stop_access_after_milliseconds_from_file_modify}000";
 #echo $stop_access_after_milliseconds_from_file_modify;
