@@ -3,8 +3,8 @@
 #In some day document will stop to show documents. (Find "new Date >" in code below, and try to change date)
 
 #Is data secret?
-secret=false;
 secret=true;
+secret=false;
 if [ $secret = true ];
 then
     echo  "Secret mode on";
@@ -52,7 +52,7 @@ html
 	padding: 0;
 }
 
-img, video, embed
+img, video, embed, audio, a
 {
 	padding: 0;
 	display: block;
@@ -190,9 +190,14 @@ b64_file_data=$( cat "${f}" | base64 --wrap=1023 );
 if [[ $mime_type == *"image/"* ]]; then
 	str_file_data=$( echo -n "<img class=\"secret\" src=\"data:${mime_type};base64,${b64_file_data}\" class=\"secret\" title=\"${f}\" alt=\"${f}\" download=\"${f}\">"; );
 elif [[ $mime_type == *"video/"* ]]; then
-	str_file_data=$( echo -n "<video ${video_and_audio_suffix}><source src=\"data:${mime_type};base64,${b64_file_data}\" class=\"secret\" title=\"${f}\" alt=\"${f}\"  download=\"${f}\"  type=\"${mime_type}\">Your browser does not support mp4 documents</video>"; );
+	str_file_data=$( echo -n "<video ${video_and_audio_suffix} source src=\"data:${mime_type};base64,${b64_file_data}\" class=\"secret\" title=\"${f}\" alt=\"${f}\"  download=\"${f}\"  type=\"${mime_type}\">This document is too cool for your browser</video>"; );
 elif [[ $mime_type == *"audio/"* ]]; then
-	str_file_data=$( echo -n "<audio ${video_and_audio_suffix}><source src=\"data:${mime_type};base64,${b64_file_data}\" class=\"secret\" title=\"${f}\" alt=\"${f}\"  download=\"${f}\"  type=\"${mime_type}\">Your browser does not support mp4 documents</video>"; );
+	str_file_data=$( echo -n "<audio ${video_and_audio_suffix} source src=\"data:${mime_type};base64,${b64_file_data}\" class=\"secret\" title=\"${f}\" alt=\"${f}\"  download=\"${f}\"  type=\"${mime_type}\">This document is too cool for your browser</audio>"; );
+else
+    #any other type of file
+    if [ $secret = false ]; then
+        str_file_data=$( echo -n "<a download=\"${f}\" href=\"data:${mime_type};base64,${b64_file_data}\" class=\"secret\" type=\"${mime_type}\" title=\"${f}\" alt=\"${f}\">${f}</a>"; );
+    fi;
 fi
 echo -n "${str_file_data}" >> "${output}";
 str_file_data="";
