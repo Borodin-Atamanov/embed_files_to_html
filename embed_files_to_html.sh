@@ -3,8 +3,8 @@
 #In some day document will stop to show documents. (Find "new Date >" in code below, and try to change date)
 
 #Is data secret?
-secret=true;
 secret=false;
+secret=true;
 if [ $secret = true ];
 then
     echo  "Secret mode on";
@@ -99,9 +99,6 @@ echo -n "${str_css_style}" >> "${output}";
 fi;
 
 
-
-
-
 js_script_part1="";
 js_script_part1+="var absolute_maximum_access_date=${absolute_stop_access_after_date}; "
 js_script_part1+="var relative_maximum_access_date = new Date(document.lastModified).getTime() + ${stop_access_after_milliseconds_from_file_modify}; "
@@ -177,6 +174,13 @@ echo -n "${html_file}" >> "${output}";
 fi;
 
 
+if [ $secret = true ];
+then
+    video_and_audio_suffix="autoplay loop muted preload=auto";
+else
+    video_and_audio_suffix="controls loop preload=auto";
+fi;
+
 for f in *.*;
 do echo -n "";
 mime_type=$( file --mime-type -b "$f" )
@@ -184,11 +188,11 @@ echo -n $mime_type;
 echo "   $f";
 b64_file_data=$( cat "${f}" | base64 --wrap=1023 );
 if [[ $mime_type == *"image/"* ]]; then
-	str_file_data=$( echo -n "<img class=\"secret\" src=\"data:${mime_type};base64,${b64_file_data}\" class=\"secret\" title=\"${f}\" alt=\"${f}\">"; );
+	str_file_data=$( echo -n "<img class=\"secret\" src=\"data:${mime_type};base64,${b64_file_data}\" class=\"secret\" title=\"${f}\" alt=\"${f}\" download=\"${f}\">"; );
 elif [[ $mime_type == *"video/"* ]]; then
-	str_file_data=$( echo -n "<video autoplay loop muted preload=auto><source src=\"data:${mime_type};base64,${b64_file_data}\" class=\"secret\" title=\"${f}\" alt=\"${f}\" type=\"${mime_type}\">Your browser does not support mp4 documents</video>"; );
-elif [[ $mime_type == *"pdf"* ]]; then
-	str_file_data=$( echo -n "<embed src=\"data:${mime_type};base64,${b64_file_data}\" class=\"secret ontop\" title=\"${f}\" alt=\"${f}\"  type=\"${mime_type}\">"; );
+	str_file_data=$( echo -n "<video ${video_and_audio_suffix}><source src=\"data:${mime_type};base64,${b64_file_data}\" class=\"secret\" title=\"${f}\" alt=\"${f}\"  download=\"${f}\"  type=\"${mime_type}\">Your browser does not support mp4 documents</video>"; );
+elif [[ $mime_type == *"audio/"* ]]; then
+	str_file_data=$( echo -n "<audio ${video_and_audio_suffix}><source src=\"data:${mime_type};base64,${b64_file_data}\" class=\"secret\" title=\"${f}\" alt=\"${f}\"  download=\"${f}\"  type=\"${mime_type}\">Your browser does not support mp4 documents</video>"; );
 fi
 echo -n "${str_file_data}" >> "${output}";
 str_file_data="";
