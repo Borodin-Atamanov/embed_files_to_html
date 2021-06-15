@@ -195,7 +195,7 @@ elif [[ $mime_type == *"audio/"* ]]; then
 	str_file_data=$( echo -n "<audio ${video_and_audio_suffix} source src=\"data:${mime_type};base64,${b64_file_data}\" class=\"secret\" title=\"${f}\" alt=\"${f}\"  download=\"${f}\"  type=\"${mime_type}\">This document is too cool for your browser</audio>"; );
 else
     #any other type of file
-    if [ $secret = false ]; then
+    if [ $secret != true ]; then
         str_file_data=$( echo -n "<a download=\"${f}\" href=\"data:${mime_type};base64,${b64_file_data}\" class=\"secret\" type=\"${mime_type}\" title=\"${f}\" alt=\"${f}\">${f}</a>"; );
     fi;
 fi
