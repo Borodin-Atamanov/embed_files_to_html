@@ -2,10 +2,26 @@
 #Script embed all image and video files in current directory to html file, use base64 encode
 #In some day document will stop to show documents. (Find "new Date >" in code below, and try to change date)
 
-#Is data secret?
-secret=true;
-secret=false;
-if [ $secret = true ];
+if [ -z "$1" ];
+then
+    #No first argument
+    #Is data secret by default?
+    secret=true;
+    secret=false;
+else
+    if [ $1 == true ] || [ "$1" -gt "1" ];
+    then
+        secret=true;
+    else
+        secret=false;
+        if [ $1 == 0 ] || [ $1 == false ];
+        then
+        secret=false;
+        fi
+    fi;
+fi
+
+if [ $secret == true ];
 then
     echo  "Secret mode on";
 else
